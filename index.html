@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="GRC Analyst portfolio page — SSL VPN credential spray incident response case study">
+  <meta name="author" content="Adam Cote">
+  <link rel="icon" href="assets/images/favicon.png">
+  <title>GRC &amp; Incident Response — Adam Cote</title>
+  <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+  <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+  <style>
+    :root { --md-text-font: "Inter"; --md-code-font: "JetBrains Mono"; }
+    /* Screenshots */
+    .portfolio-screenshot {
+      border: 1px solid var(--md-default-fg-color--lightest);
+      border-radius: .2rem;
+      margin: 1em 0;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+    .portfolio-screenshot img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .portfolio-screenshot figcaption {
+      font-size: .68rem;
+      padding: .4em .7em;
+      border-top: 1px solid var(--md-default-fg-color--lightest);
+      color: var(--md-default-fg-color--light);
+      font-style: italic;
+      background: var(--md-code-bg-color);
+    }
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1em;
+      margin: 1em 0;
+    }
+    @media (max-width: 600px) { .screenshot-grid { grid-template-columns: 1fr; } }
+    .screenshot-grid .portfolio-screenshot { margin: 0; }
+    /* Lightbox */
+    #lb { display:none; position:fixed; inset:0; background:rgba(0,0,0,.87);
+          z-index:9999; align-items:center; justify-content:center; cursor:zoom-out; }
+    #lb.open { display:flex; }
+    #lb img { max-width:92vw; max-height:90vh; border-radius:3px; }
+  </style>
+  <script>
+    __md_scope = new URL(".", location);
+    __md_hash = e => [...e].reduce(((e,_) => (e<<5)-e+_.charCodeAt(0)), 0);
+    __md_get = (e, _=localStorage, t=__md_scope) => JSON.parse(_.getItem(t.pathname+"."+e));
+    __md_set = (e, _, t=localStorage, a=__md_scope) => { try { t.setItem(a.pathname+"."+e, JSON.stringify(_)) } catch(e) {} };
+  </script>
+</head>
+
+<body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+
+<!-- Lightbox -->
+<div id="lb" onclick="this.classList.remove('open')">
+  <img id="lb-img" src="" alt="">
+</div>
+
+<input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+<input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+  <a href="#beyond-the-mdr-threshold" class="md-skip">Skip to content</a>
+</div>
+<div data-md-component="announce"></div>
+
+<!-- Header -->
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="#" title="Adam Cote — Cybersecurity &amp; GRC Portfolio" class="md-header__button md-logo" aria-label="Adam Cote — Cybersecurity &amp; GRC Portfolio" data-md-component="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">Adam Cote — Cybersecurity &amp; GRC Portfolio</span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">GRC &amp; Incident Response</span>
+        </div>
+      </div>
+    </div>
+    <!-- Dark mode toggle -->
+    <form class="md-header__option" data-md-component="palette">
+      <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+      <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    </form>
+    <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+  </nav>
+</header>
+
+<div class="md-container" data-md-component="container">
+  <!-- Nav tabs -->
+  <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+    <div class="md-grid">
+      <ul class="md-tabs__list">
+        <li class="md-tabs__item"><a href="#" class="md-tabs__link">Home</a></li>
+        <li class="md-tabs__item md-tabs__item--active"><a href="#" class="md-tabs__link">GRC &amp; Incident Response</a></li>
+        <li class="md-tabs__item"><a href="Adam-Cote-Resume.pdf" class="md-tabs__link">Resume</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="md-main" data-md-component="main">
+    <div class="md-main__inner md-grid">
+
+      <!-- Left sidebar / nav drawer -->
+      <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+        <div class="md-sidebar__scrollwrap">
+          <div class="md-sidebar__inner">
+            <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+              <label class="md-nav__title" for="__drawer">
+                <a href="#" title="Adam Cote — Cybersecurity &amp; GRC Portfolio" class="md-nav__button md-logo" aria-label="Adam Cote — Cybersecurity &amp; GRC Portfolio">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+                </a>
+                Adam Cote — Cybersecurity &amp; GRC Portfolio
+              </label>
+              <ul class="md-nav__list" data-md-scrollfix>
+                <li class="md-nav__item">
+                  <a href="#" class="md-nav__link">Home</a>
+                </li>
+                <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+                  <input class="md-nav__toggle md-toggle" type="checkbox" id="__nav_2" checked>
+                  <label class="md-nav__link" for="__nav_2">
+                    <span class="md-ellipsis">GRC &amp; Incident Response</span>
+                    <span class="md-nav__icon md-icon"></span>
+                  </label>
+                  <nav class="md-nav" aria-label="GRC &amp; Incident Response" data-md-level="1">
+                    <label class="md-nav__title" for="__nav_2">
+                      <span class="md-nav__icon md-icon"></span>
+                      GRC &amp; Incident Response
+                    </label>
+                    <ul class="md-nav__list">
+                      <li class="md-nav__item md-nav__item--active">
+                        <a href="#beyond-the-mdr-threshold" class="md-nav__link md-nav__link--active">GRC &amp; Incident Response</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#problem-statement" class="md-nav__link">Problem Statement</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#discovery-and-investigation" class="md-nav__link">Discovery &amp; Investigation</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#remediation" class="md-nav__link">Remediation</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#validation" class="md-nav__link">Validation</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#tooling" class="md-nav__link">Tooling</a>
+                      </li>
+                      <li class="md-nav__item">
+                        <a href="#why-this-matters" class="md-nav__link">Why This Matters</a>
+                      </li>
+                    </ul>
+                  </nav>
+                </li>
+                <li class="md-nav__item">
+                  <a href="Adam-Cote-Resume.pdf" class="md-nav__link">Resume (PDF)</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right sidebar / TOC -->
+      <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+        <div class="md-sidebar__scrollwrap">
+          <div class="md-sidebar__inner">
+            <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+              <label class="md-nav__title" for="__toc">
+                <span class="md-nav__icon md-icon"></span>
+                Table of contents
+              </label>
+              <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+                <li class="md-nav__item"><a href="#problem-statement" class="md-nav__link">Problem Statement</a></li>
+                <li class="md-nav__item"><a href="#risk-and-regulatory-impact" class="md-nav__link">Risk and Regulatory Impact</a></li>
+                <li class="md-nav__item"><a href="#constraints" class="md-nav__link">Constraints</a></li>
+                <li class="md-nav__item"><a href="#discovery-and-investigation" class="md-nav__link">Discovery and Investigation</a></li>
+                <li class="md-nav__item"><a href="#remediation" class="md-nav__link">Remediation</a></li>
+                <li class="md-nav__item"><a href="#validation" class="md-nav__link">Validation</a>
+                  <nav class="md-nav" aria-label="Validation">
+                    <ul class="md-nav__list">
+                      <li class="md-nav__item"><a href="#evidence" class="md-nav__link">Evidence</a></li>
+                    </ul>
+                  </nav>
+                </li>
+                <li class="md-nav__item"><a href="#tooling" class="md-nav__link">Tooling</a></li>
+                <li class="md-nav__item"><a href="#why-this-matters" class="md-nav__link">Why This Matters</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="md-content" data-md-component="content">
+        <article class="md-content__inner md-typeset">
+
+<h1 id="beyond-the-mdr-threshold">I didn't sharpen the runbook. I wrote it.</h1>
+
+<p><strong>Healthcare cybersecurity and GRC.</strong></p>
+
+<p>Sole security practitioner across an 11-site federally qualified health center. Independent compliance peer-consultant to a 10-FQHC healthcare consortium. WGU MS Cybersecurity, April 2026. Seeking roles in security operations, GRC, or compliance where security is the primary responsibility.</p>
+
+<p>I built this page specifically for Pax8 Global — I'm excited about this role! I put this portfolio together just for you. My master's capstone was based on a real incident at the organization where I'm the sole security and GRC practitioner. Every artifact is either a direct analog of the real thing or a recreation of work I actually performed in the environment. From detection to validation, this was my incident.</p>
+
+<p>
+  <a class="md-button md-button--primary" href="Adam-Cote-Resume.pdf" download>Resume</a>
+  &nbsp;
+  <a class="md-button" href="D490-Task3-Main-Writeup.pdf" download>Capstone Main Writeup</a>
+  &nbsp;
+  <a class="md-button" href="D490-Task3-Appendixes.pdf" download>Capstone Appendixes</a>
+</p>
+
+<hr>
+
+<h2 id="case-study">Case Study — Beyond the MDR Threshold</h2>
+
+<h3 id="problem-statement">Problem Statement</h3>
+
+<p>A small HIPAA-covered healthcare organization sustained a password spray and brute-force attack against its externally exposed SSL VPN authentication portal for at least six months. The organization's managed detection and response provider, under an active 24/7 monitoring contract, generated no automated alert at any point during the attack window. Detection occurred only through manual investigation by internal IT staff.</p>
+
+<p>At the time of discovery:</p>
+
+<ul>
+<li>The SSL VPN portal authenticated login attempts against Active Directory via cleartext LDAP on port 389, meaning every external authentication attempt caused the SonicWall gateway to issue LDAP bind requests directly to the domain controller — credentials traversing the internal network in plaintext</li>
+<li>No centralized log collection infrastructure existed; security event logs resided only on the systems that generated them with no aggregation, review process, or retention policy</li>
+<li>No multi-factor authentication was enforced on the VPN portal, meaning a single correct password guess would have granted silent, undetected network access indistinguishable from a legitimate login</li>
+<li>Nine SonicWall management interfaces were publicly accessible from the WAN — the MDR provider's initial assessment had reported four; independent external validation confirmed nine</li>
+</ul>
+
+<hr>
+
+<h2 id="risk-and-regulatory-impact">Risk and Regulatory Impact</h2>
+
+<p><strong>Direct credential exposure confirmed.</strong> Wireshark packet capture during the investigation confirmed that authentication credentials — including exact passwords — were visible in plaintext in LDAP bind requests on port 389. Two accounts authenticated successfully during the attack window: an LDAP service account used by the SonicWall appliance and a VPN user account. Post-incident forensic review found no evidence of lateral movement or unauthorized data access from either account, but the window of undetected access was approximately six months.</p>
+
+<p><strong>HIPAA compliance gaps.</strong> The absence of centralized log collection and routine review represented a direct violation of HIPAA Security Rule §164.312(b), which requires audit controls capable of recording and examining activity in systems containing electronic protected health information. The cleartext LDAP credential transmission was inconsistent with §164.312(e)(1) transmission security requirements. Neither gap was incidental — both were direct contributors to the six-month attack duration.</p>
+
+<p><strong>Structural detection failure.</strong> Authentication failure volume during the active attack phase spiked approximately 140 to 160 times above the organization's documented baseline. That spike was invisible to the MDR provider because the provider's detection thresholds were calibrated across an enterprise-scale customer base, not the organization's specific authentication baseline. The structural gap between enterprise-scale detection thresholds and small-organization baseline activity is a predictable consequence of the co-managed security model as commonly deployed.</p>
+
+<hr>
+
+<h2 id="constraints">Constraints</h2>
+
+<ul>
+<li><strong>Single IT administrator.</strong> The initial incident response was entirely dependent on the institutional knowledge of one IT staff member who happened to run Wireshark at the right moment. No documented process, no escalation path, no coverage model existed.</li>
+<li><strong>Active MDR contract created false confidence.</strong> The organization's implicit assumption that the MDR contract constituted sufficient detection coverage was structurally incorrect and was not discovered until the attack had already run for months.</li>
+<li><strong>No centralized log infrastructure.</strong> The attack could only be partially reconstructed from a single 4.15-hour Wireshark capture window. No pre-incident baseline data existed.</li>
+<li><strong>VPN access required during remediation.</strong> Approximately ten staff members depended on VPN for daily operations. Remediation had to be sequenced to minimize access disruption while closing the attack surface.</li>
+</ul>
+
+<hr>
+
+<h2 id="discovery-and-investigation">Discovery and Investigation</h2>
+
+<p>Detection occurred when the IT systems administrator manually captured traffic on the domain controller using Wireshark. The capture documented the following:</p>
+
+<table>
+<thead><tr><th>Metric</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Capture window</td><td>4.15 hours (February 27, 2026)</td></tr>
+<tr><td>Authentication attempts observed</td><td>342</td></tr>
+<tr><td>Distinct user accounts targeted</td><td>16</td></tr>
+<tr><td>Unique passwords attempted</td><td>271</td></tr>
+<tr><td>Approximate attempt rate</td><td>1 attempt every 44 seconds, sustained</td></tr>
+<tr><td>Event ID 4625 volume vs. baseline</td><td>~140–160× above baseline</td></tr>
+<tr><td>Accounts with successful authentication (Event 4624)</td><td>2 — LDAP service account + VPN user</td></tr>
+<tr><td>Evidence of lateral movement</td><td>None found</td></tr>
+<tr><td>Evidence of unauthorized data access</td><td>None found</td></tr>
+</tbody>
+</table>
+
+<p>The investigation confirmed that the authentication traffic was transmitted in cleartext between the SonicWall appliance and the domain controller, with exact passwords readable in the live packet capture. This finding directly established the LDAPS migration requirement and simultaneously validated the investigation methodology: the same tool used to discover the problem was used to validate its correction, providing a directly comparable before-and-after evidence set.</p>
+
+<p>The MDR provider was contacted and provided a log export under a formal support ticket confirming successful authentication events for both accounts during the attack window. A subsequent SLA review confirmed that the per-customer threshold tuning necessary to detect this attack pattern is a platform-level constraint — not configurable per customer at the time of review. This framing was essential for the remediation design: when a vendor-side gap cannot be resolved unilaterally, the appropriate response is an internal compensating control calibrated to the organization's specific baseline.</p>
+
+<hr>
+
+<h2 id="remediation">Remediation</h2>
+
+<p>Remediation proceeded through four phases following a phased delivery methodology with defined KPIs and acceptance criteria for each phase.</p>
+
+<p><strong>Phase 1 — Immediate containment (February 27, 2026)</strong></p>
+<ul>
+<li>LDAP disabled on the primary attack-surface device per MDR provider recommendation</li>
+<li>Passwords reset for both accounts confirmed to have authenticated during the attack window; active sessions revoked; both accounts flagged for elevated monitoring</li>
+</ul>
+
+<p><strong>Phase 2 — VPN hardening (April 2026)</strong></p>
+<p>Five security gates were deployed and validated in sequence:</p>
+<ol>
+<li><strong>IP allowlisting</strong> — SSLVPN IP Allowlist address group restricting VPN access initiation to pre-registered staff WAN addresses, enforced as the source restriction on the Default Access Rule for inbound SSL VPN traffic</li>
+<li><strong>Per-user TOTP enrollment</strong> — Time-based One-Time Password configured via NetExtender QR code for all ten VPN users in the RCHS-VPN-Users Active Directory security group</li>
+<li><strong>Active Directory group enforcement</strong> — RCHS-VPN-Users group serving as the authoritative permitted-user list within the SonicWall user/group policy mapping</li>
+<li><strong>TOTP MFA enforcement</strong> — Enforced at the SSLVPN Services group level; all whitelisted-IP attempts without a valid TOTP code are rejected before authentication reaches Active Directory</li>
+<li><strong>LDAPS migration</strong> — SonicWall authentication profile reconfigured from cleartext LDAP port 389 to TLS-encrypted port 636; validated by Wireshark captures showing zero packets on port 389 and active TLS 1.2/1.3 handshake on port 636</li>
+</ol>
+<p>All nine externally accessible SonicWall management portals were confirmed closed during this phase via external browser tests from a cellular connection against each interface IP, all returning <code>ERR_CONNECTION_TIMED_OUT</code> — confirming the firewall rule is silently dropping traffic rather than actively refusing it.</p>
+
+<p><strong>Phase 3 — Detection infrastructure and policy (April 2026)</strong></p>
+<ul>
+<li>WEF/WEC centralized logging deployed: RCHS-SecurityEvents subscription forwarding authentication events (4624, 4625, 4740, 4648, 4776) and PHI file-access events (4656, 4660, 4663, 5145) from the domain controller to a dedicated WEC collector VM</li>
+<li>Dual-threshold PowerShell spray detection script deployed: fires on (a) 11 or more consecutive failures on a single account within any window, or (b) 5 or more distinct accounts with failures within a one-hour window</li>
+<li>RCHS-IS-004 Log Review and Incident Detection Policy authored: tiered weekly/monthly/quarterly/annual review cadence, eight anomaly thresholds with defined Level 1 and Level 2 escalation paths, six-year log retention schedule aligned to 45 C.F.R. §164.316(b)(2)</li>
+<li>All-staff security awareness training delivered to approximately 80 staff members; VPN MFA supplemental training delivered to all 10 VPN users with access restoration conditional on confirmed enrollment</li>
+</ul>
+
+<p><strong>Phase 4 — Controlled validation (April 11, 2026)</strong></p>
+<p>A controlled spray simulation was executed under written management authorization using five non-production test accounts created specifically for the test and disabled immediately after. The simulation used the <code>ValidateCredentials()</code> method against the domain controller's authentication stack, confirmed to generate Event IDs 4625 and 4776 on the domain controller. Both detection thresholds fired against real authentication event data: the spray pattern threshold (5 distinct accounts) and the account threshold (spray_test01 exceeded 11 failures). All test accounts were confirmed disabled at simulation completion.</p>
+
+<hr>
+
+<h2 id="validation">Validation</h2>
+
+<table>
+<thead>
+<tr><th>KPI</th><th>Acceptance Criterion</th><th>Result</th></tr>
+</thead>
+<tbody>
+<tr><td>MFA enforcement</td><td>100% of whitelisted-IP VPN attempts without valid TOTP rejected</td><td>PASS</td></tr>
+<tr><td>Management interface closure</td><td>0 of 9 interfaces accessible from WAN</td><td>PASS</td></tr>
+<tr><td>WEF/WEC event forwarding latency</td><td>Required Event IDs forwarded to WEC within 5-minute window</td><td>PASS — 4663 event received at 16 seconds</td></tr>
+<tr><td>LDAPS migration</td><td>Zero cleartext LDAP bind requests on port 389 during 30-minute window</td><td>PASS — 0 packets on port 389; TLS confirmed on port 636</td></tr>
+<tr><td>Spray detection — account threshold</td><td>Alert after 11th consecutive failure on a single account</td><td>PASS</td></tr>
+<tr><td>Spray detection — spray pattern threshold</td><td>Alert after 5th distinct account failure within 1-hour window</td><td>PASS</td></tr>
+<tr><td>HIPAA audit control compliance</td><td>Log review policy signed and in effect</td><td>IN PROGRESS — policy authored; pending executive signatures (no technical dependency)</td></tr>
+</tbody>
+</table>
+
+<p>Wireshark post-migration validation: zero packets captured on port 389 using the <code>host [DC IP] and tcp port 389</code> capture filter; 80 packets captured on port 636 with TLS 1.2/1.3 handshake confirmed. The TLS capture included a <code>Fatal: Unknown CA</code> alert — expected behavior for a self-signed domain controller certificate not fully trusted by the SonicWall appliance, confirming TLS negotiation is occurring rather than indicating a failure.</p>
+
+<h3 id="evidence">Evidence</h3>
+
+<p>The following screenshots were captured during the controlled spray simulation and post-remediation validation (April 11, 2026).</p>
+
+<div class="screenshot-grid">
+  <figure class="portfolio-screenshot" onclick="lb(this.querySelector('img'))">
+    <img src="screenshots/wec-spray-events.png" alt="WEC Forwarded Events showing 4625 and 4776 events during spray simulation">
+    <figcaption>WEC collector (VM2) receiving Event IDs 4625 and 4776 from the domain controller in real time during the spray simulation. Detail pane confirms: Event 4776, Logon Account: spray_test01, Error Code: 0xC000006A (wrong password), Computer: WIN-KE7QK2G934F.homelab.local.</figcaption>
+  </figure>
+  <figure class="portfolio-screenshot" onclick="lb(this.querySelector('img'))">
+    <img src="screenshots/totp-config.png" alt="SonicWall SSLVPN Services TOTP configuration dialog">
+    <figcaption>SonicWall admin console — Add Group Settings dialog for the SSLVPN Services group, with the One-time password method dropdown open showing TOTP as the selected option. Phase 2, Gate 4.</figcaption>
+  </figure>
+</div>
+
+<figure class="portfolio-screenshot" onclick="lb(this.querySelector('img'))">
+  <img src="screenshots/detection-alert.png" alt="PowerShell spray detection script output showing both thresholds firing">
+  <figcaption>Phase 4 summative evaluation — PowerShell detection script running against the DC Security log. Both thresholds fired on live event data: spray pattern alert (5 distinct accounts with failures in the 1-hour window) and account threshold alert (spray_test01 exceeded 11 failures). Timestamp: April 11, 2026, 16:56:53.</figcaption>
+</figure>
+
+<figure class="portfolio-screenshot" onclick="lb(this.querySelector('img'))" style="max-width:420px">
+  <img src="screenshots/auth-diagram.png" alt="Post-remediation authentication flow diagram">
+  <figcaption>Post-remediation SSL VPN authentication decision flow. All four control layers — IP allowlist, LDAP authentication, credential validation, and TOTP 2FA — must pass for remote access to be granted. Auth events branch to the WEF/WEC pipeline regardless of outcome.</figcaption>
+</figure>
+
+<hr>
+
+<h2 id="tooling">Tooling</h2>
+
+<p>The spray detection script in Phase 4 is one instance of a broader pattern I use across GRC and compliance work: ingest structured data, evaluate against a defined policy rule, output a PASS/FAIL result with supporting detail. Two other tools built on the same pattern:</p>
+
+<p><strong>PowerShell CIS Benchmark control-testing framework.</strong> Scripts that programmatically verify Windows Server security baseline settings against CIS Controls v8 control objectives, producing per-control pass/fail results with the current state, expected state, and control ID. Designed for repeatable compliance verification without relying on commercial benchmark tooling.</p>
+
+<p><strong>Multi-viewport accessibility and compliance scanner.</strong> A Playwright and axe-core pipeline that runs WCAG 2.1 AA audits across desktop, tablet, and mobile viewports against client web properties. Raw axe findings — typically high-volume and repetitive across viewports — are fed to an LLM-orchestrated triage layer that classifies findings by severity, deduplicates across viewports, and generates remediation summaries aligned to WCAG criterion references. Built for and used in production across a ten-FQHC consortium accessibility engagement. The same orchestration pattern — ingest findings, apply policy-based classification, generate corrective action items — transfers directly to security event triage, runbook improvement, and corrective action tracking.</p>
+
+<hr>
+
+<h2 id="why-this-matters">Why This Matters</h2>
+
+<p>This engagement demonstrates incident response and security hardening in a constrained real-world environment — not a lab, not a simulation. The attack was live, the credential exposure was confirmed, and the remediation had to balance security controls against operational continuity for a clinical workforce.</p>
+
+<p>The key transferable outcomes are:</p>
+
+<ul>
+<li><strong>Validated before-and-after methodology.</strong> Using the same tool to discover the problem and validate the fix — Wireshark, in this case — produces a directly comparable evidence set that is defensible in a compliance or regulatory context. The post-migration capture showing zero packets on port 389 is not an assertion; it is a measurement.</li>
+<li><strong>Compensating control design under vendor constraints.</strong> When a platform-level MDR limitation cannot be resolved unilaterally, the appropriate architectural response is an internal detection layer calibrated to the specific environment's baseline — not an assumption that the vendor will adapt. RCHS-IS-004 and the dual-threshold detection script are that layer.</li>
+<li><strong>Documentation as a governance artifact.</strong> The VPN Secure Setup Runbook and RCHS-IS-004 transform a set of technical configurations into a sustained compliance program with defined ownership, review cadence, and escalation paths. The policy is the control; the infrastructure implements it.</li>
+<li><strong>Framework transferability.</strong> This project was scoped under HIPAA and implemented against NIST SP 800-53 and NIST CSF 2.0. Those frameworks are the methodological upstream of SOC 2 Trust Services Criteria, ISO 27001 Annex A, and PCI DSS control objectives. The compliance methodology is the same; the regulated party changes.</li>
+</ul>
+
+<p><strong>Framework alignment:</strong> HIPAA Security Rule §164.308(a)(5), §164.312(a)(1), §164.312(b), §164.312(d), §164.312(e)(1), §164.316(b)(1)/(b)(2) · NIST SP 800-53 Rev. 5: AU-2, AU-3, AU-6, AU-9, AU-11, SI-4, IA-2, SC-8 · NIST CSF 2.0: Protect (PR.AC, PR.DS), Detect (DE.CM, DE.AE), Respond (RS.AN) · CIS Controls v8: Control 6 (Access Control), Control 8 (Audit Log Management) · NIST SP 800-61 Rev. 3 (Incident Handling)</p>
+
+<div class="admonition note">
+<p class="admonition-title">Framework context for MSP / multi-tenant environments</p>
+<p>The NIST 800-53 control families exercised in this engagement — AU (Audit and Accountability), SI (System and Information Integrity), IA (Identification and Authentication), SC (System and Communications Protection) — map directly to the Trust Services Criteria in SOC 2, the Annex A controls in ISO 27001, and the control objectives in PCI DSS. The analytical methodology for identifying gaps, designing compensating controls, and documenting remediation outcomes is the same regardless of which framework the downstream report targets.</p>
+</div>
+
+        </article>
+      </div><!-- /md-content -->
+
+    </div><!-- /md-main__inner -->
+  </main>
+
+  <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+    Back to top
+  </button>
+
+  <footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-copyright">
+          <div class="md-copyright__highlight">© 2026 Adam Cote</div>
+          &nbsp;·&nbsp; All case study content sanitized per WGU publication policy.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /md-container -->
+
+<script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.tracking", "toc.follow"], "search": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.placeholder": "Type to start searching"}}</script>
+<script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+
+<script>
+  function lb(img) {
+    document.getElementById('lb-img').src = img.src;
+    document.getElementById('lb').classList.add('open');
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.getElementById('lb').classList.remove('open');
+  });
+</script>
+
+</body>
+</html>
